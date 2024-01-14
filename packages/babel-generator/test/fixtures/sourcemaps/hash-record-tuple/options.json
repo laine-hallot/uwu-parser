@@ -1,5 +1,0 @@
-{
-  "recordAndTupleSyntaxType": "hash",
-  "plugins": [["recordAndTuple", { "syntaxType": "hash" }]],
-  "sourceMaps": true
-}
