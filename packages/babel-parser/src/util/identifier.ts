@@ -1,5 +1,5 @@
 import * as charCodes from "charcodes";
-import { isIdentifierStart } from "@babel/helper-validator-identifier";
+import { isIdentifierStart } from "../../../babel-helper-validator-identifier/src";
 
 export {
   isIdentifierStart,
@@ -9,7 +9,7 @@ export {
   isStrictBindReservedWord,
   isStrictReservedWord,
   isKeyword,
-} from "@babel/helper-validator-identifier";
+} from "../../../babel-helper-validator-identifier/src";
 
 export const keywordRelationalOperator = /^in(stanceof)?$/;
 
@@ -18,7 +18,7 @@ export const keywordRelationalOperator = /^in(stanceof)?$/;
 export function isIteratorStart(
   current: number,
   next: number,
-  next2: number,
+  next2: number
 ): boolean {
   return (
     current === charCodes.atSign &&

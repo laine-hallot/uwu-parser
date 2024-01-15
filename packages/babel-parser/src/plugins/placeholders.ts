@@ -1,13 +1,13 @@
 import * as charCodes from "charcodes";
 
-import { tokenLabelName, tt } from "../tokenizer/types.ts";
-import type Parser from "../parser/index.ts";
-import type * as N from "../types.ts";
-import { ParseErrorEnum } from "../parse-error.ts";
-import type { Undone } from "../parser/node.ts";
-import type { ExpressionErrors } from "../parser/util.ts";
-import type { BindingFlag } from "../util/scopeflags.ts";
-import type { Position } from "../util/location.ts";
+import { tokenLabelName, tt } from "../tokenizer/types";
+import type Parser from "../parser/index";
+import type * as N from "../types";
+import { ParseErrorEnum } from "../parse-error";
+import type { Undone } from "../parser/node";
+import type { ExpressionErrors } from "../parser/util";
+import type { BindingFlag } from "../util/scopeflags";
+import type { Position } from "../util/location";
 
 type PossiblePlaceholders = {
   Identifier: N.Identifier;
@@ -40,7 +40,7 @@ const PlaceholderErrors = ParseErrorEnum`placeholders`({
 export default (superClass: typeof Parser) =>
   class PlaceholdersParserMixin extends superClass implements Parser {
     parsePlaceholder<T extends PlaceholderTypes>(
-      expectedNode: T,
+      expectedNode: T
     ): /*?N.Placeholder<T>*/ MaybePlaceholder<T> | undefined | null {
       if (this.match(tt.placeholder)) {
         const node = this.startNode();
@@ -53,19 +53,19 @@ export default (superClass: typeof Parser) =>
 
         this.assertNoSpace();
         this.expect(tt.placeholder);
-        // @ts-expect-error placeholder typings
+        // @ts-ignore placeholder typings
         return this.finishPlaceholder(node, expectedNode);
       }
     }
 
     finishPlaceholder<T extends PlaceholderTypes>(
       node: N.Node,
-      expectedNode: T,
+      expectedNode: T
     ): /*N.Placeholder<T>*/ MaybePlaceholder<T> {
       const isFinished = !!(node.expectedNode && node.type === "Placeholder");
       node.expectedNode = expectedNode;
 
-      // @ts-expect-error todo(flow->ts)
+      // @ts-ignore todo(flow->ts)
       return isFinished ? node : this.finishNode(node, "Placeholder");
     }
 
@@ -89,7 +89,7 @@ export default (superClass: typeof Parser) =>
      * ============================================================ */
 
     parseExprAtom(
-      refExpressionErrors?: ExpressionErrors | null,
+      refExpressionErrors?: ExpressionErrors | null
     ): MaybePlaceholder<"Expression"> {
       return (
         this.parsePlaceholder("Expression") ||
@@ -111,7 +111,7 @@ export default (superClass: typeof Parser) =>
       word: string,
       startLoc: Position,
       checkKeywords: boolean,
-      isBinding: boolean,
+      isBinding: boolean
     ) {
       // Sometimes we call #checkReservedWord(node.name), expecting
       // that node is an Identifier. If it is a Placeholder, name
@@ -169,25 +169,25 @@ export default (superClass: typeof Parser) =>
 
     verifyBreakContinue(
       node: N.BreakStatement | N.ContinueStatement,
-      isBreak: boolean,
+      isBreak: boolean
     ) {
-      // @ts-expect-error: node.label could be Placeholder
+      // @ts-ignore: node.label could be Placeholder
       if (node.label && node.label.type === "Placeholder") return;
       super.verifyBreakContinue(node, isBreak);
     }
 
-    // @ts-expect-error Plugin will override parser interface
+    // @ts-ignore Plugin will override parser interface
     parseExpressionStatement(
       node: MaybePlaceholder<"Statement">,
-      expr: N.Expression,
+      expr: N.Expression
     ): MaybePlaceholder<"Statement"> {
       if (expr.type !== "Placeholder" || expr.extra?.parenthesized) {
-        // @ts-expect-error placeholder typings
+        // @ts-ignore placeholder typings
         return super.parseExpressionStatement(node, expr);
       }
 
       if (this.match(tt.colon)) {
-        // @ts-expect-error placeholder typings
+        // @ts-ignore placeholder typings
         const stmt: N.LabeledStatement = node;
         stmt.label = this.finishPlaceholder(expr, "Identifier");
         this.next();
@@ -203,30 +203,30 @@ export default (superClass: typeof Parser) =>
     parseBlock(
       allowDirectives?: boolean,
       createNewLexicalScope?: boolean,
-      afterBlockParse?: (hasStrictModeDirective: boolean) => void,
+      afterBlockParse?: (hasStrictModeDirective: boolean) => void
     ): MaybePlaceholder<"BlockStatement"> {
       return (
         this.parsePlaceholder("BlockStatement") ||
         super.parseBlock(
           allowDirectives,
           createNewLexicalScope,
-          afterBlockParse,
+          afterBlockParse
         )
       );
     }
 
     parseFunctionId(
-      requireId?: boolean,
+      requireId?: boolean
     ): MaybePlaceholder<"Identifier"> | undefined | null {
       return (
         this.parsePlaceholder("Identifier") || super.parseFunctionId(requireId)
       );
     }
-    // @ts-expect-error Plugin will override parser interface
+    // @ts-ignore Plugin will override parser interface
     parseClass<T extends N.Class>(
       node: T,
       isStatement: /* T === ClassDeclaration */ boolean,
-      optionalId?: boolean,
+      optionalId?: boolean
     ): T {
       const type = isStatement ? "ClassDeclaration" : "ClassExpression";
 
@@ -248,7 +248,7 @@ export default (superClass: typeof Parser) =>
         } else {
           throw this.raise(
             PlaceholderErrors.ClassNameIsRequired,
-            this.state.startLoc,
+            this.state.startLoc
           );
         }
       } else {
@@ -290,7 +290,7 @@ export default (superClass: typeof Parser) =>
           if (
             this.input.startsWith(
               tokenLabelName(tt.placeholder),
-              this.nextTokenStartSince(next + 4),
+              this.nextTokenStartSince(next + 4)
             )
           ) {
             return true;
@@ -306,7 +306,7 @@ export default (superClass: typeof Parser) =>
         | N.ExportAllDeclaration
         | N.ExportNamedDeclaration
       >,
-      maybeDefaultIdentifier: N.Identifier | null,
+      maybeDefaultIdentifier: N.Identifier | null
     ): node is Undone<N.ExportNamedDeclaration> {
       if ((node as N.ExportNamedDeclaration).specifiers?.length) {
         // "export %%NAME%%" has already been parsed by #parseExport.
@@ -314,7 +314,7 @@ export default (superClass: typeof Parser) =>
       }
       return super.maybeParseExportDefaultSpecifier(
         node,
-        maybeDefaultIdentifier,
+        maybeDefaultIdentifier
       );
     }
 
@@ -322,8 +322,8 @@ export default (superClass: typeof Parser) =>
       const { specifiers } = node;
       if (specifiers?.length) {
         node.specifiers = specifiers.filter(
-          // @ts-expect-error placeholder typings
-          node => node.exported.type === "Placeholder",
+          // @ts-ignore placeholder typings
+          node => node.exported.type === "Placeholder"
         );
       }
       super.checkExport(node);
@@ -331,7 +331,7 @@ export default (superClass: typeof Parser) =>
     }
 
     parseImport(
-      node: Undone<N.ImportDeclaration>,
+      node: Undone<N.ImportDeclaration>
     ): N.ImportDeclaration | N.TsImportEqualsDeclaration {
       const placeholder = this.parsePlaceholder("Identifier");
       if (!placeholder) return super.parseImport(node);
@@ -350,7 +350,7 @@ export default (superClass: typeof Parser) =>
         this.startNodeAtNode<N.ImportDefaultSpecifier>(placeholder);
       specifier.local = placeholder;
       node.specifiers.push(
-        this.finishNode(specifier, "ImportDefaultSpecifier"),
+        this.finishNode(specifier, "ImportDefaultSpecifier")
       );
 
       if (this.eat(tt.comma)) {

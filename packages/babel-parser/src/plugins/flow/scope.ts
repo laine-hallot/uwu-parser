@@ -1,7 +1,7 @@
-import type { Position } from "../../util/location.ts";
-import ScopeHandler, { NameType, Scope } from "../../util/scope.ts";
-import { BindingFlag, type ScopeFlag } from "../../util/scopeflags.ts";
-import type * as N from "../../types.ts";
+import type { Position } from "../../util/location";
+import ScopeHandler, { NameType, Scope } from "../../util/scope";
+import { BindingFlag, type ScopeFlag } from "../../util/scopeflags";
+import type * as N from "../../types";
 
 // Reference implementation: https://github.com/facebook/flow/blob/23aeb2a2ef6eb4241ce178fde5d8f17c5f747fb5/src/typing/env.ml#L536-L584
 class FlowScope extends Scope {
@@ -29,7 +29,7 @@ export default class FlowScopeHandler extends ScopeHandler<FlowScope> {
   isRedeclaredInScope(
     scope: FlowScope,
     name: string,
-    bindingType: BindingFlag,
+    bindingType: BindingFlag
   ): boolean {
     if (super.isRedeclaredInScope(scope, name, bindingType)) return true;
 

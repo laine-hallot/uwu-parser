@@ -1,32 +1,28 @@
-import type { Position } from "../util/location.ts";
+import type { Position } from "../util/location";
 import {
   tokenIsLiteralPropertyName,
   tt,
   type TokenType,
-} from "../tokenizer/types.ts";
-import Tokenizer from "../tokenizer/index.ts";
-import type State from "../tokenizer/state.ts";
-import type {
-  EstreePropertyDefinition,
-  Node,
-  ObjectProperty,
-} from "../types.ts";
-import { lineBreak, skipWhiteSpaceToLineBreak } from "../util/whitespace.ts";
-import { isIdentifierChar } from "../util/identifier.ts";
-import ClassScopeHandler from "../util/class-scope.ts";
-import ExpressionScopeHandler from "../util/expression-scope.ts";
-import { ScopeFlag } from "../util/scopeflags.ts";
+} from "../tokenizer/types";
+import Tokenizer from "../tokenizer/index";
+import type State from "../tokenizer/state";
+import type { EstreePropertyDefinition, Node, ObjectProperty } from "../types";
+import { lineBreak, skipWhiteSpaceToLineBreak } from "../util/whitespace";
+import { isIdentifierChar } from "../util/identifier";
+import ClassScopeHandler from "../util/class-scope";
+import ExpressionScopeHandler from "../util/expression-scope";
+import { ScopeFlag } from "../util/scopeflags";
 import ProductionParameterHandler, {
   ParamKind,
-} from "../util/production-parameter.ts";
+} from "../util/production-parameter";
 import {
   Errors,
   type ParseError,
   type ParseErrorConstructor,
-} from "../parse-error.ts";
-import type Parser from "./index.ts";
+} from "../parse-error";
+import type Parser from "./index";
 
-import type ScopeHandler from "../util/scope.ts";
+import type ScopeHandler from "../util/scope";
 
 type TryParse<Node, Error, Thrown, Aborted, FailState> = {
   node: Node;
@@ -46,7 +42,7 @@ export default abstract class UtilParser extends Tokenizer {
     node: Partial<Node>,
     key: string,
     value: any,
-    enumerable: boolean = true,
+    enumerable: boolean = true
   ): void {
     if (!node) return;
 
@@ -98,7 +94,7 @@ export default abstract class UtilParser extends Tokenizer {
 
   expectContextual(
     token: TokenType,
-    toParseError?: ParseErrorConstructor<any>,
+    toParseError?: ParseErrorConstructor<any>
   ): void {
     if (!this.eatContextual(token)) {
       if (toParseError != null) {
@@ -120,7 +116,7 @@ export default abstract class UtilParser extends Tokenizer {
 
   hasPrecedingLineBreak(): boolean {
     return lineBreak.test(
-      this.input.slice(this.state.lastTokEndLoc.index, this.state.start),
+      this.input.slice(this.state.lastTokEndLoc.index, this.state.start)
     );
   }
 
@@ -152,7 +148,7 @@ export default abstract class UtilParser extends Tokenizer {
   // It is expensive and should be used with cautions
   tryParse<T extends Node | ReadonlyArray<Node>>(
     fn: (abort: (node?: T) => never) => T,
-    oldState: State = this.state.clone(),
+    oldState: State = this.state.clone()
   ):
     | TryParse<T, null, false, false, null>
     | TryParse<T | null, ParseError<any>, boolean, false, State>
@@ -192,7 +188,7 @@ export default abstract class UtilParser extends Tokenizer {
       const failState = this.state;
       this.state = oldState;
       if (error instanceof SyntaxError) {
-        // @ts-expect-error casting general syntax error to parse error
+        // @ts-ignore casting general syntax error to parse error
         return { node: null, error, thrown: true, aborted: false, failState };
       }
       if (error === abortSignal) {
@@ -211,7 +207,7 @@ export default abstract class UtilParser extends Tokenizer {
 
   checkExpressionErrors(
     refExpressionErrors: ExpressionErrors | undefined | null,
-    andThrow: boolean,
+    andThrow: boolean
   ) {
     if (!refExpressionErrors) return false;
     const {
@@ -292,7 +288,7 @@ export default abstract class UtilParser extends Tokenizer {
   }
 
   isObjectProperty(
-    node: Node,
+    node: Node
   ): node is ObjectProperty | EstreePropertyDefinition {
     return node.type === "ObjectProperty";
   }
@@ -303,7 +299,7 @@ export default abstract class UtilParser extends Tokenizer {
 
   initializeScopes(
     this: Parser,
-    inModule: boolean = this.options.sourceType === "module",
+    inModule: boolean = this.options.sourceType === "module"
   ): () => void {
     // Initialize state
     const oldLabels = this.state.labels;

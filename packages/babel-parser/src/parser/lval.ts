@@ -1,5 +1,5 @@
 import * as charCodes from "charcodes";
-import { tt, type TokenType } from "../tokenizer/types.ts";
+import { tt, type TokenType } from "../tokenizer/types";
 import type {
   AssignmentPattern,
   TSParameterProperty,
@@ -19,17 +19,17 @@ import type {
   ObjectPattern,
   ArrayExpression,
   ArrayPattern,
-} from "../types.ts";
-import type { Pos, Position } from "../util/location.ts";
+} from "../types";
+import type { Pos, Position } from "../util/location";
 import {
   isStrictBindOnlyReservedWord,
   isStrictBindReservedWord,
-} from "../util/identifier.ts";
-import { NodeUtils, type Undone } from "./node.ts";
-import { BindingFlag } from "../util/scopeflags.ts";
-import type { ExpressionErrors } from "./util.ts";
-import { Errors, type LValAncestor } from "../parse-error.ts";
-import type Parser from "./index.ts";
+} from "../util/identifier";
+import { NodeUtils, type Undone } from "./node";
+import { BindingFlag } from "../util/scopeflags";
+import type { ExpressionErrors } from "./util";
+import { Errors, type LValAncestor } from "../parse-error";
+import type Parser from "./index";
 
 const getOwn = <T extends {}>(object: T, key: keyof T) =>
   Object.hasOwnProperty.call(object, key) && object[key];
@@ -52,20 +52,20 @@ export default abstract class LValParser extends NodeUtils {
   abstract parseMaybeAssign(
     refExpressionErrors?: ExpressionErrors | null,
     afterLeftParse?: Function,
-    refNeedsArrowPos?: Pos | null,
+    refNeedsArrowPos?: Pos | null
   ): Expression;
 
   abstract parseMaybeAssignAllowIn(
     refExpressionErrors?: ExpressionErrors | null,
     afterLeftParse?: Function,
-    refNeedsArrowPos?: Pos | null,
+    refNeedsArrowPos?: Pos | null
   ): Expression;
 
   abstract parseObjectLike<T extends ObjectPattern | ObjectExpression>(
     close: TokenType,
     isPattern: boolean,
     isRecord?: boolean,
-    refExpressionErrors?: ExpressionErrors,
+    refExpressionErrors?: ExpressionErrors
   ): T;
   abstract parseObjPropValue(
     prop: any,
@@ -74,10 +74,10 @@ export default abstract class LValParser extends NodeUtils {
     isAsync: boolean,
     isPattern: boolean,
     isAccessor: boolean,
-    refExpressionErrors?: ExpressionErrors | null,
+    refExpressionErrors?: ExpressionErrors | null
   ): void;
   abstract parsePropertyName(
-    prop: ObjectOrClassMember | ClassMember | TsNamedTypeElementBase,
+    prop: ObjectOrClassMember | ClassMember | TsNamedTypeElementBase
   ): Expression | Identifier;
   abstract parsePrivateName(): PrivateName;
   // Forward-declaration: defined in statement.js
@@ -111,7 +111,7 @@ export default abstract class LValParser extends NodeUtils {
         if (parenthesized.type === "Identifier") {
           this.expressionScope.recordArrowParameterBindingError(
             Errors.InvalidParenthesizedAssignment,
-            node,
+            node
           );
         } else if (
           parenthesized.type !== "MemberExpression" &&
@@ -161,7 +161,7 @@ export default abstract class LValParser extends NodeUtils {
         if (this.isPrivateName(key)) {
           this.classScope.usePrivateName(
             this.getPrivateNameSV(key),
-            key.loc.start,
+            key.loc.start
           );
         }
         this.toAssignable(value, isLHS);
@@ -171,7 +171,7 @@ export default abstract class LValParser extends NodeUtils {
       case "SpreadElement": {
         throw new Error(
           "Internal @babel/parser error (this is a bug, please report it)." +
-            " SpreadElement should be converted by .toAssignable's caller.",
+            " SpreadElement should be converted by .toAssignable's caller."
         );
       }
 
@@ -180,7 +180,7 @@ export default abstract class LValParser extends NodeUtils {
         this.toAssignableList(
           node.elements,
           node.extra?.trailingCommaLoc,
-          isLHS,
+          isLHS
         );
         break;
 
@@ -208,14 +208,14 @@ export default abstract class LValParser extends NodeUtils {
   toAssignableObjectExpressionProp(
     prop: Node,
     isLast: boolean,
-    isLHS: boolean,
+    isLHS: boolean
   ) {
     if (prop.type === "ObjectMethod") {
       this.raise(
         prop.kind === "get" || prop.kind === "set"
           ? Errors.PatternHasAccessor
           : Errors.PatternHasMethod,
-        prop.key,
+        prop.key
       );
     } else if (prop.type === "SpreadElement") {
       prop.type = "RestElement";
@@ -236,7 +236,7 @@ export default abstract class LValParser extends NodeUtils {
   toAssignableList(
     exprList: Expression[],
     trailingCommaLoc: Position | undefined | null,
-    isLHS: boolean,
+    isLHS: boolean
   ): void {
     const end = exprList.length - 1;
 
@@ -281,7 +281,7 @@ export default abstract class LValParser extends NodeUtils {
               (i === last || prop.type !== "SpreadElement") &&
               this.isAssignable(prop)
             );
-          },
+          }
         );
       }
 
@@ -293,7 +293,7 @@ export default abstract class LValParser extends NodeUtils {
 
       case "ArrayExpression":
         return (node as ArrayExpression).elements.every(
-          element => element === null || this.isAssignable(element),
+          element => element === null || this.isAssignable(element)
         );
 
       case "AssignmentExpression":
@@ -316,14 +316,14 @@ export default abstract class LValParser extends NodeUtils {
   toReferencedList(
     exprList: ReadonlyArray<Expression | undefined | null>,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isParenthesizedExpr?: boolean,
+    isParenthesizedExpr?: boolean
   ): ReadonlyArray<Expression | undefined | null> {
     return exprList;
   }
 
   toReferencedListDeep(
     exprList: ReadonlyArray<Expression | undefined | null>,
-    isParenthesizedExpr?: boolean,
+    isParenthesizedExpr?: boolean
   ): void {
     this.toReferencedList(exprList, isParenthesizedExpr);
 
@@ -338,13 +338,13 @@ export default abstract class LValParser extends NodeUtils {
 
   parseSpread(
     this: Parser,
-    refExpressionErrors?: ExpressionErrors | null,
+    refExpressionErrors?: ExpressionErrors | null
   ): SpreadElement {
     const node = this.startNode<SpreadElement>();
     this.next();
     node.argument = this.parseMaybeAssignAllowIn(
       refExpressionErrors,
-      undefined,
+      undefined
     );
     return this.finishNode(node, "SpreadElement");
   }
@@ -365,11 +365,11 @@ export default abstract class LValParser extends NodeUtils {
       case tt.bracketL: {
         const node = this.startNode<ArrayPattern>();
         this.next();
-        // @ts-expect-error: Fixme: TSParameterProperty can not be assigned to node.elements
+        // @ts-ignore: Fixme: TSParameterProperty can not be assigned to node.elements
         node.elements = this.parseBindingList(
           tt.bracketR,
           charCodes.rightSquareBracket,
-          ParseBindingListFlags.ALLOW_EMPTY,
+          ParseBindingListFlags.ALLOW_EMPTY
         );
         return this.finishNode(node, "ArrayPattern");
       }
@@ -387,7 +387,7 @@ export default abstract class LValParser extends NodeUtils {
     this: Parser,
     close: TokenType,
     closeCharCode: (typeof charCodes)[keyof typeof charCodes],
-    flags: ParseBindingListFlags,
+    flags: ParseBindingListFlags
   ): Array<Pattern | TSParameterProperty> {
     const allowEmpty = flags & ParseBindingListFlags.ALLOW_EMPTY;
 
@@ -405,7 +405,7 @@ export default abstract class LValParser extends NodeUtils {
         break;
       } else if (this.match(tt.ellipsis)) {
         elts.push(
-          this.parseAssignableListItemTypes(this.parseRestBinding(), flags),
+          this.parseAssignableListItemTypes(this.parseRestBinding(), flags)
         );
         if (!this.checkCommaAfterRest(closeCharCode)) {
           this.expect(close);
@@ -429,7 +429,7 @@ export default abstract class LValParser extends NodeUtils {
   // https://tc39.es/ecma262/#prod-BindingRestProperty
   parseBindingRestProperty(
     this: Parser,
-    prop: Undone<RestElement>,
+    prop: Undone<RestElement>
   ): RestElement {
     this.next(); // eat '...'
     // Don't use parseRestBinding() as we only allow Identifier here.
@@ -458,14 +458,14 @@ export default abstract class LValParser extends NodeUtils {
       false /* isGenerator */,
       false /* isAsync */,
       true /* isPattern */,
-      false /* isAccessor */,
+      false /* isAccessor */
     );
   }
 
   parseAssignableListItem(
     this: Parser,
     flags: ParseBindingListFlags,
-    decorators: Decorator[],
+    decorators: Decorator[]
   ): Pattern | TSParameterProperty {
     const left = this.parseMaybeDefault();
     this.parseAssignableListItemTypes(left, flags);
@@ -480,7 +480,7 @@ export default abstract class LValParser extends NodeUtils {
   parseAssignableListItemTypes(
     param: Pattern,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    flags: ParseBindingListFlags,
+    flags: ParseBindingListFlags
   ): Pattern {
     return param;
   }
@@ -490,7 +490,7 @@ export default abstract class LValParser extends NodeUtils {
   parseMaybeDefault(
     this: Parser,
     startLoc?: Position | null,
-    left?: Pattern | null,
+    left?: Pattern | null
   ): Pattern {
     startLoc ??= this.state.startLoc;
     left = left ?? this.parseBindingAtom();
@@ -535,7 +535,7 @@ export default abstract class LValParser extends NodeUtils {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isUnparenthesizedInAssign: boolean,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    binding: BindingFlag,
+    binding: BindingFlag
   ): string | boolean {
     return getOwn(
       {
@@ -546,8 +546,8 @@ export default abstract class LValParser extends NodeUtils {
         ArrayPattern: "elements",
         ObjectPattern: "properties",
       },
-      // @ts-expect-error refine string to enum
-      type,
+      // @ts-ignore refine string to enum
+      type
     );
   }
 
@@ -595,7 +595,7 @@ export default abstract class LValParser extends NodeUtils {
       checkClashes?: Set<string> | false;
       strictModeChanged?: boolean;
       hasParenthesizedAncestor?: boolean;
-    },
+    }
   ): void {
     const type = expression.type;
 
@@ -627,7 +627,7 @@ export default abstract class LValParser extends NodeUtils {
       this.checkIdentifier(
         expression as Identifier,
         binding,
-        strictModeChanged,
+        strictModeChanged
       );
 
       const { name } = expression as Identifier;
@@ -647,7 +647,7 @@ export default abstract class LValParser extends NodeUtils {
       type,
       !(hasParenthesizedAncestor || expression.extra?.parenthesized) &&
         ancestor.type === "AssignmentExpression",
-      binding,
+      binding
     );
 
     if (validity === true) return;
@@ -669,7 +669,7 @@ export default abstract class LValParser extends NodeUtils {
         ? ({ type } as const)
         : ancestor;
 
-    // @ts-expect-error key may not index expression.
+    // @ts-ignore key may not index expression.
     for (const child of [].concat(expression[key])) {
       if (child) {
         this.checkLVal(child, {
@@ -686,7 +686,7 @@ export default abstract class LValParser extends NodeUtils {
   checkIdentifier(
     at: Identifier,
     bindingType: BindingFlag,
-    strictModeChanged: boolean = false,
+    strictModeChanged: boolean = false
   ) {
     if (
       this.state.strict &&
@@ -734,7 +734,7 @@ export default abstract class LValParser extends NodeUtils {
   }
 
   checkCommaAfterRest(
-    close: (typeof charCodes)[keyof typeof charCodes],
+    close: (typeof charCodes)[keyof typeof charCodes]
   ): boolean {
     if (!this.match(tt.comma)) {
       return false;
@@ -744,7 +744,7 @@ export default abstract class LValParser extends NodeUtils {
       this.lookaheadCharCode() === close
         ? Errors.RestTrailingComma
         : Errors.ElementAfterRest,
-      this.state.startLoc,
+      this.state.startLoc
     );
 
     return true;

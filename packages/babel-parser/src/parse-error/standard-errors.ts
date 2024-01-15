@@ -1,5 +1,5 @@
-import type { ParseErrorTemplates } from "../parse-error.ts";
-import toNodeDescription from "./to-node-description.ts";
+import type { ParseErrorTemplates } from "../parse-error";
+import toNodeDescription from "./to-node-description";
 
 export type LValAncestor =
   | { type: "UpdateExpression"; prefix: boolean }
@@ -153,7 +153,7 @@ export default {
     `Binding invalid left-hand side in ${toNodeDescription(ancestor)}.`,
   InvalidLhsOptionalChaining: ({ ancestor }: { ancestor: LValAncestor }) =>
     `Invalid optional chaining in the left-hand side of ${toNodeDescription(
-      ancestor,
+      ancestor
     )}.`,
   InvalidNumber: "Invalid number.",
   InvalidOrMissingExponent:
@@ -204,7 +204,7 @@ export default {
     surrogateCharCode: number;
   }) =>
     `An export name cannot include a lone surrogate, found '\\u${surrogateCharCode.toString(
-      16,
+      16
     )}'.`,
   ModuleExportUndefined: ({ localName }: { localName: string }) =>
     `Export '${localName}' is not defined.`,

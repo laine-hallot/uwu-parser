@@ -1,5 +1,5 @@
-import type { ParseErrorTemplates } from "../parse-error.ts";
-import toNodeDescription from "./to-node-description.ts";
+import type { ParseErrorTemplates } from "../parse-error";
+import toNodeDescription from "./to-node-description";
 
 export const UnparenthesizedPipeBodyDescriptions = new Set([
   "ArrowFunctionExpression",
@@ -8,9 +8,8 @@ export const UnparenthesizedPipeBodyDescriptions = new Set([
   "YieldExpression",
 ] as const);
 
-type GetSetMemberType<T extends Set<any>> = T extends Set<infer M>
-  ? M
-  : unknown;
+type GetSetMemberType<T extends Set<any>> =
+  T extends Set<infer M> ? M : unknown;
 
 export type UnparenthesizedPipeBodyTypes = GetSetMemberType<
   typeof UnparenthesizedPipeBodyDescriptions

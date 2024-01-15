@@ -1,4 +1,4 @@
-import { Position } from "./util/location.ts";
+import { Position } from "./util/location";
 
 type SyntaxPlugin =
   | "flow"
@@ -46,7 +46,7 @@ export type ParseError<ErrorDetails> = SyntaxError &
 // 1. https://github.com/microsoft/TypeScript/blob/v4.5.5/lib/lib.es5.d.ts#L1027
 export type ParseErrorConstructor<ErrorDetails> = (
   loc: Position,
-  details: ErrorDetails,
+  details: ErrorDetails
 ) => ParseError<ErrorDetails>;
 
 type ToMessage<ErrorDetails> = (self: ErrorDetails) => string;
@@ -124,7 +124,7 @@ export type ParseErrorTemplates = { [reasonCode: string]: ParseErrorTemplate };
 export function ParseErrorEnum(a: TemplateStringsArray): <
   T extends ParseErrorTemplates,
 >(
-  parseErrorTemplates: T,
+  parseErrorTemplates: T
 ) => {
   [K in keyof T]: ParseErrorConstructor<
     T[K] extends { message: string | ToMessage<any> }
@@ -139,7 +139,7 @@ export function ParseErrorEnum(a: TemplateStringsArray): <
 
 export function ParseErrorEnum<T extends ParseErrorTemplates>(
   parseErrorTemplates: T,
-  syntaxPlugin?: SyntaxPlugin,
+  syntaxPlugin?: SyntaxPlugin
 ): {
   [K in keyof T]: ParseErrorConstructor<
     T[K] extends { message: string | ToMessage<any> }
@@ -172,7 +172,7 @@ export function ParseErrorEnum<T extends ParseErrorTemplates>(
 //
 export function ParseErrorEnum(
   argument: TemplateStringsArray | ParseErrorTemplates,
-  syntaxPlugin?: SyntaxPlugin,
+  syntaxPlugin?: SyntaxPlugin
 ) {
   // If the first parameter is an array, that means we were called with a tagged
   // template literal. Extract the syntaxPlugin from this, and call again in
@@ -209,10 +209,10 @@ export function ParseErrorEnum(
   return ParseErrorConstructors;
 }
 
-import ModuleErrors from "./parse-error/module-errors.ts";
-import StandardErrors from "./parse-error/standard-errors.ts";
-import StrictModeErrors from "./parse-error/strict-mode-errors.ts";
-import PipelineOperatorErrors from "./parse-error/pipeline-operator-errors.ts";
+import ModuleErrors from "./parse-error/module-errors";
+import StandardErrors from "./parse-error/standard-errors";
+import StrictModeErrors from "./parse-error/strict-mode-errors";
+import PipelineOperatorErrors from "./parse-error/pipeline-operator-errors";
 
 export const Errors = {
   ...ParseErrorEnum(ModuleErrors),
@@ -221,4 +221,4 @@ export const Errors = {
   ...ParseErrorEnum`pipelineOperator`(PipelineOperatorErrors),
 };
 
-export type { LValAncestor } from "./parse-error/standard-errors.ts";
+export type { LValAncestor } from "./parse-error/standard-errors";

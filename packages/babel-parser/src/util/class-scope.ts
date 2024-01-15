@@ -1,7 +1,7 @@
-import { ClassElementType } from "./scopeflags.ts";
-import type { Position } from "./location.ts";
-import { Errors } from "../parse-error.ts";
-import type Tokenizer from "../tokenizer/index.ts";
+import { ClassElementType } from "./scopeflags";
+import type { Position } from "./location";
+import { Errors } from "../parse-error";
+import type Tokenizer from "../tokenizer/index";
 
 export class ClassScope {
   // A list of private named declared in the current class
@@ -57,7 +57,7 @@ export default class ClassScopeHandler {
   declarePrivateName(
     name: string,
     elementType: ClassElementType,
-    loc: Position,
+    loc: Position
   ) {
     const { privateNames, loneAccessors, undefinedPrivateNames } =
       this.current();

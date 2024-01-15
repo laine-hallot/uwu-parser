@@ -1,9 +1,9 @@
 /*:: declare var invariant; */
 
-import BaseParser from "./base.ts";
-import type { Comment, Node, Identifier } from "../types.ts";
+import BaseParser from "./base";
+import type { Comment, Node, Identifier } from "../types";
 import * as charCodes from "charcodes";
-import type { Undone } from "./node.ts";
+import type { Undone } from "./node";
 
 /**
  * A whitespace token containing comments
@@ -68,7 +68,7 @@ function setLeadingComments(node: Undone<Node>, comments: Array<Comment>) {
  */
 export function setInnerComments(
   node: Undone<Node>,
-  comments?: Array<Comment>,
+  comments?: Array<Comment>
 ) {
   if (node.innerComments === undefined) {
     node.innerComments = comments;
@@ -85,7 +85,7 @@ export function setInnerComments(
 function adjustInnerComments(
   node: Undone<Node>,
   elements: Array<Node>,
-  commentWS: CommentWhitespace,
+  commentWS: CommentWhitespace
 ) {
   let lastElement = null;
   let i = elements.length;

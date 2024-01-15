@@ -1,27 +1,27 @@
-import type { Options } from "./options.ts";
+import type { Options } from "./options";
 import {
   hasPlugin,
   validatePlugins,
   mixinPluginNames,
   mixinPlugins,
   type PluginList,
-} from "./plugin-utils.ts";
+} from "./plugin-utils";
 import type {
   PluginConfig as ParserPlugin,
   FlowPluginOptions,
   RecordAndTuplePluginOptions,
   PipelineOperatorPluginOptions,
-} from "./typings.ts";
-import Parser from "./parser/index.ts";
+} from "./typings";
+import Parser from "./parser/index";
 
-import type { ExportedTokenType } from "./tokenizer/types.ts";
+import type { ExportedTokenType } from "./tokenizer/types";
 import {
   getExportedToken,
   tt as internalTokenTypes,
   type InternalTokenTypes,
-} from "./tokenizer/types.ts";
+} from "./tokenizer/types";
 
-import type { Expression, File } from "./types.ts";
+import type { Expression, File } from "./types";
 
 export function parse(input: string, options?: Options): File {
   if (options?.sourceType === "unambiguous") {
@@ -76,11 +76,11 @@ export function parseExpression(input: string, options?: Options): Expression {
 }
 
 function generateExportedTokenTypes(
-  internalTokenTypes: InternalTokenTypes,
+  internalTokenTypes: InternalTokenTypes
 ): Record<string, ExportedTokenType> {
   const tokenTypes: Record<string, ExportedTokenType> = {};
   for (const typeName of Object.keys(
-    internalTokenTypes,
+    internalTokenTypes
   ) as (keyof InternalTokenTypes)[]) {
     tokenTypes[typeName] = getExportedToken(internalTokenTypes[typeName]);
   }
@@ -106,7 +106,7 @@ function getParserClass(pluginsFromOptions: PluginList): {
   new (...args: any): Parser;
 } {
   const pluginList = mixinPluginNames.filter(name =>
-    hasPlugin(pluginsFromOptions, name),
+    hasPlugin(pluginsFromOptions, name)
   );
 
   const key = pluginList.join("/");
@@ -114,7 +114,7 @@ function getParserClass(pluginsFromOptions: PluginList): {
   if (!cls) {
     cls = Parser;
     for (const plugin of pluginList) {
-      // @ts-expect-error todo(flow->ts)
+      // @ts-ignore todo(flow->ts)
       cls = mixinPlugins[plugin](cls);
     }
     parserClassCache[key] = cls;

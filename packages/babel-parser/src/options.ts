@@ -1,4 +1,4 @@
-import type { PluginList } from "./plugin-utils.ts";
+import type { PluginList } from "./plugin-utils";
 
 // A second optional argument can be given to further configure
 // the parser process. These options are recognized:

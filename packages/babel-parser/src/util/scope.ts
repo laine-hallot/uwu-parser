@@ -1,8 +1,8 @@
-import { ScopeFlag, BindingFlag } from "./scopeflags.ts";
-import type { Position } from "./location.ts";
-import type * as N from "../types.ts";
-import { Errors } from "../parse-error.ts";
-import type Tokenizer from "../tokenizer/index.ts";
+import { ScopeFlag, BindingFlag } from "./scopeflags";
+import type { Position } from "./location";
+import type * as N from "../types";
+import { Errors } from "../parse-error";
+import type Tokenizer from "../tokenizer/index";
 
 export const enum NameType {
   // var-declared names in the current lexical scope
@@ -81,7 +81,7 @@ export default class ScopeHandler<IScope extends Scope = Scope> {
 
   enter(flags: ScopeFlag) {
     /*:: +createScope: (flags:ScopeFlag) => IScope; */
-    // @ts-expect-error This method will be overwritten by subclasses
+    // @ts-ignore This method will be overwritten by subclasses
     this.scopeStack.push(this.createScope(flags));
   }
 
@@ -149,7 +149,7 @@ export default class ScopeHandler<IScope extends Scope = Scope> {
     scope: IScope,
     name: string,
     bindingType: BindingFlag,
-    loc: Position,
+    loc: Position
   ) {
     if (this.isRedeclaredInScope(scope, name, bindingType)) {
       this.parser.raise(Errors.VarRedeclaration, loc, {
@@ -161,7 +161,7 @@ export default class ScopeHandler<IScope extends Scope = Scope> {
   isRedeclaredInScope(
     scope: IScope,
     name: string,
-    bindingType: BindingFlag,
+    bindingType: BindingFlag
   ): boolean {
     if (!(bindingType & BindingFlag.KIND_VALUE)) return false;
 

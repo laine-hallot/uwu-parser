@@ -1,7 +1,7 @@
-import type Parser from "../parser/index.ts";
-import { tokenIsIdentifier, tt } from "../tokenizer/types.ts";
-import type * as N from "../types.ts";
-import type { ExpressionErrors } from "../parser/util.ts";
+import type Parser from "../parser/index";
+import { tokenIsIdentifier, tt } from "../tokenizer/types";
+import type * as N from "../types";
+import type { ExpressionErrors } from "../parser/util";
 
 export default (superClass: typeof Parser) =>
   class V8IntrinsicMixin extends superClass implements Parser {
@@ -14,7 +14,7 @@ export default (superClass: typeof Parser) =>
         if (tokenIsIdentifier(this.state.type)) {
           const name = this.parseIdentifierName();
           const identifier = this.createIdentifier(node, name);
-          // @ts-expect-error: avoid mutating AST types
+          // @ts-ignore: avoid mutating AST types
           identifier.type = "V8IntrinsicIdentifier";
           if (this.match(tt.parenL)) {
             return identifier;

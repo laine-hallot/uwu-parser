@@ -1,6 +1,6 @@
 /* eslint-disable no-confusing-arrow */
 
-import { isIdentifierName } from "@babel/helper-validator-identifier";
+import { isIdentifierName } from "../../../babel-helper-validator-identifier/src";
 
 const { isArray } = Array;
 const { isInteger } = Number;
@@ -22,7 +22,7 @@ export default class Difference {
 }
 
 Difference.None = Object.freeze(
-  Object.setPrototypeOf({}, Difference.prototype),
+  Object.setPrototypeOf({}, Difference.prototype)
 );
 
 const toType = value =>
@@ -64,7 +64,7 @@ function compare(adjust, expected, actual) {
     return compare(
       adjust,
       { message: expected.message },
-      { message: actual.message },
+      { message: actual.message }
     );
   }
 
@@ -74,7 +74,7 @@ function compare(adjust, expected, actual) {
 
   const keysExpected = Object.keys(expected);
   const keysActual = Object.keys(actual).filter(
-    key => actual[key] !== void 0 && typeof actual[key] !== "function",
+    key => actual[key] !== void 0 && typeof actual[key] !== "function"
   );
   const lengthExpected = keysExpected.length;
   const lengthActual = keysActual.length;
@@ -119,7 +119,7 @@ const toUnwoundDifference = compiled =>
   !isArray(compiled)
     ? [[], compiled]
     : toUnwoundDifference(compiled[1]).map((item, index) =>
-        index === 0 ? [compiled[0], ...item] : item,
+        index === 0 ? [compiled[0], ...item] : item
       );
 
 const toValueString = (value, type = toType(value)) =>

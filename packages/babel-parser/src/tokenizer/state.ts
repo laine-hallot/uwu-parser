@@ -1,11 +1,11 @@
-import type { Options } from "../options.ts";
+import type { Options } from "../options";
 import type { CommentWhitespace } from "../parser/comments";
-import { Position } from "../util/location.ts";
+import { Position } from "../util/location";
 
-import { types as ct, type TokContext } from "./context.ts";
-import { tt, type TokenType } from "./types.ts";
-import type { Errors } from "../parse-error.ts";
-import type { ParseError } from "../parse-error.ts";
+import { types as ct, type TokContext } from "./context";
+import { tt, type TokenType } from "./types";
+import type { Errors } from "../parse-error";
+import type { ParseError } from "../parse-error";
 
 export type DeferredStrictError =
   | typeof Errors.StrictNumericEscape

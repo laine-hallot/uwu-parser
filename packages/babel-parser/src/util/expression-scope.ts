@@ -1,7 +1,7 @@
-import { Errors, type ParseErrorConstructor } from "../parse-error.ts";
-import type { Position } from "./location.ts";
-import type { Node } from "../types.ts";
-import type Tokenizer from "../tokenizer/index.ts";
+import { Errors, type ParseErrorConstructor } from "../parse-error";
+import type { Position } from "./location";
+import type { Node } from "../types";
+import type Tokenizer from "../tokenizer/index";
 
 /**
  * @module util/expression-scope
@@ -87,13 +87,13 @@ class ArrowHeadParsingScope extends ExpressionScope {
   constructor(
     type:
       | ExpressionScopeType.kMaybeArrowParameterDeclaration
-      | ExpressionScopeType.kMaybeAsyncArrowParameterDeclaration,
+      | ExpressionScopeType.kMaybeAsyncArrowParameterDeclaration
   ) {
     super(type);
   }
   recordDeclarationError(
     ParsingErrorClass: ParseErrorConstructor<{}>,
-    at: Position,
+    at: Position
   ) {
     const index = at.index;
 
@@ -103,7 +103,7 @@ class ArrowHeadParsingScope extends ExpressionScope {
     this.declarationErrors.delete(index);
   }
   iterateErrors(
-    iterator: (a: [ArrowHeadParsingDeclarationError, Position]) => void,
+    iterator: (a: [ArrowHeadParsingDeclarationError, Position]) => void
   ) {
     this.declarationErrors.forEach(iterator);
   }
@@ -133,7 +133,7 @@ export default class ExpressionScopeHandler {
    */
   recordParameterInitializerError(
     toParseError: ArrowHeadParsingParameterInitializerError,
-    node: Node,
+    node: Node
   ): void {
     const origin = node.loc.start;
     const { stack } = this;
@@ -173,7 +173,7 @@ export default class ExpressionScopeHandler {
    */
   recordArrowParameterBindingError(
     error: ParseErrorConstructor<{}>,
-    node: Node,
+    node: Node
   ): void {
     const { stack } = this;
     const scope: ExpressionScope = stack[stack.length - 1];
@@ -230,13 +230,13 @@ export function newParameterDeclarationScope() {
 
 export function newArrowHeadScope() {
   return new ArrowHeadParsingScope(
-    ExpressionScopeType.kMaybeArrowParameterDeclaration,
+    ExpressionScopeType.kMaybeArrowParameterDeclaration
   );
 }
 
 export function newAsyncArrowScope() {
   return new ArrowHeadParsingScope(
-    ExpressionScopeType.kMaybeAsyncArrowParameterDeclaration,
+    ExpressionScopeType.kMaybeAsyncArrowParameterDeclaration
   );
 }
 

@@ -38,7 +38,7 @@ type NodeWithDescription =
       type: NodeTypesWithDescriptions;
     };
 
-// @ts-expect-error prefix is specified only when type is UpdateExpression
+// @ts-ignore prefix is specified only when type is UpdateExpression
 // eslint-disable-next-line no-confusing-arrow
 const toNodeDescription = ({ type, prefix }: NodeWithDescription) =>
   type === "UpdateExpression"

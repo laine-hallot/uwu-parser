@@ -1,23 +1,23 @@
 import * as charCodes from "charcodes";
 
-import XHTMLEntities from "./xhtml.ts";
-import type Parser from "../../parser/index.ts";
-import type { ExpressionErrors } from "../../parser/util.ts";
+import XHTMLEntities from "./xhtml";
+import type Parser from "../../parser/index";
+import type { ExpressionErrors } from "../../parser/util";
 import {
   tokenComesBeforeExpression,
   tokenIsKeyword,
   tokenLabelName,
   type TokenType,
   tt,
-} from "../../tokenizer/types.ts";
-import type { TokContext } from "../../tokenizer/context.ts";
-import { types as tc } from "../../tokenizer/context.ts";
-import type * as N from "../../types.ts";
-import { isIdentifierChar, isIdentifierStart } from "../../util/identifier.ts";
-import type { Position } from "../../util/location.ts";
-import { isNewLine } from "../../util/whitespace.ts";
-import { Errors, ParseErrorEnum } from "../../parse-error.ts";
-import type { Undone } from "../../parser/node.ts";
+} from "../../tokenizer/types";
+import type { TokContext } from "../../tokenizer/context";
+import { types as tc } from "../../tokenizer/context";
+import type * as N from "../../types";
+import { isIdentifierChar, isIdentifierStart } from "../../util/identifier";
+import type { Position } from "../../util/location";
+import { isNewLine } from "../../util/whitespace";
+import { Errors, ParseErrorEnum } from "../../parse-error";
+import type { Undone } from "../../parser/node";
 
 /* eslint sort-keys: "error" */
 const JsxErrors = ParseErrorEnum`jsx`({
@@ -56,7 +56,7 @@ function isFragment(object?: N.JSXElement | null): boolean {
 // Transforms JSX element name to string.
 
 function getQualifiedJSXName(
-  object: N.JSXIdentifier | N.JSXNamespacedName | N.JSXMemberExpression,
+  object: N.JSXIdentifier | N.JSXNamespacedName | N.JSXMemberExpression
 ): string {
   if (object.type === "JSXIdentifier") {
     return object.name;
@@ -80,7 +80,7 @@ function getQualifiedJSXName(
 
 export interface IJSXParserMixin {
   jsxParseOpeningElementAfterName(
-    node: N.JSXOpeningElement,
+    node: N.JSXOpeningElement
   ): N.JSXOpeningElement;
 }
 
@@ -95,7 +95,7 @@ export default (superClass: typeof Parser) =>
         if (this.state.pos >= this.length) {
           throw this.raise(
             JsxErrors.UnterminatedJsxContent,
-            this.state.startLoc,
+            this.state.startLoc
           );
         }
 
@@ -206,7 +206,7 @@ export default (superClass: typeof Parser) =>
           radix,
           /* len */ undefined,
           /* forceLen */ false,
-          /* allowNumSeparator */ "bail",
+          /* allowNumSeparator */ "bail"
         );
         if (
           codePoint !== null &&
@@ -356,7 +356,7 @@ export default (superClass: typeof Parser) =>
 
     jsxParseExpressionContainer(
       node: Undone<N.JSXExpressionContainer>,
-      previousContext: TokContext,
+      previousContext: TokContext
     ): N.JSXExpressionContainer {
       if (this.match(tt.braceR)) {
         node.expression = this.jsxParseEmptyExpression();
@@ -370,7 +370,7 @@ export default (superClass: typeof Parser) =>
           ) {
             this.raise(
               JsxErrors.UnexpectedSequenceExpression,
-              expression.expressions[1],
+              expression.expressions[1]
             );
           }
         }
@@ -407,20 +407,20 @@ export default (superClass: typeof Parser) =>
 
     jsxParseOpeningElementAt(startLoc: Position): N.JSXOpeningElement {
       const node = this.startNodeAt<N.JSXOpeningElement | N.JSXOpeningFragment>(
-        startLoc,
+        startLoc
       );
       if (this.eat(tt.jsxTagEnd)) {
-        // @ts-expect-error migrate to Babel types
+        // @ts-ignore migrate to Babel types
         return this.finishNode(node, "JSXOpeningFragment");
       }
       node.name = this.jsxParseElementName();
       return this.jsxParseOpeningElementAfterName(
-        node as Undone<N.JSXOpeningElement>,
+        node as Undone<N.JSXOpeningElement>
       );
     }
 
     jsxParseOpeningElementAfterName(
-      node: Undone<N.JSXOpeningElement>,
+      node: Undone<N.JSXOpeningElement>
     ): N.JSXOpeningElement {
       const attributes: N.JSXAttribute[] = [];
       while (!this.match(tt.slash) && !this.match(tt.jsxTagEnd)) {
@@ -480,7 +480,7 @@ export default (superClass: typeof Parser) =>
                 children.push(this.jsxParseSpreadChild(node));
               } else {
                 children.push(
-                  this.jsxParseExpressionContainer(node, tc.j_expr),
+                  this.jsxParseExpressionContainer(node, tc.j_expr)
                 );
               }
 
@@ -525,7 +525,7 @@ export default (superClass: typeof Parser) =>
       if (this.match(tt.lt)) {
         throw this.raise(
           JsxErrors.UnwrappedAdjacentJSXElements,
-          this.state.startLoc,
+          this.state.startLoc
         );
       }
 

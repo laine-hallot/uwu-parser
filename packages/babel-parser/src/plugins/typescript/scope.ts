@@ -1,8 +1,8 @@
-import type { Position } from "../../util/location.ts";
-import ScopeHandler, { NameType, Scope } from "../../util/scope.ts";
-import { BindingFlag, ScopeFlag } from "../../util/scopeflags.ts";
-import type * as N from "../../types.ts";
-import { Errors } from "../../parse-error.ts";
+import type { Position } from "../../util/location";
+import ScopeHandler, { NameType, Scope } from "../../util/scope";
+import { BindingFlag, ScopeFlag } from "../../util/scopeflags";
+import type * as N from "../../types";
+import { Errors } from "../../parse-error";
 
 const enum TsNameType {
   Types = 1 << 0,
@@ -111,7 +111,7 @@ export default class TypeScriptScopeHandler extends ScopeHandler<TypeScriptScope
   isRedeclaredInScope(
     scope: TypeScriptScope,
     name: string,
-    bindingType: BindingFlag,
+    bindingType: BindingFlag
   ): boolean {
     const type = scope.tsNames.get(name);
     if ((type & TsNameType.Enums) > 0) {
