@@ -12,7 +12,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "devDependencies": {
     "charcodes": "^0.2.0"
   },
@@ -38,8 +38,8 @@
   },
   "exports": {
     ".": {
-      "types": "./lib/index.d.ts",
-      "default": "./lib/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },

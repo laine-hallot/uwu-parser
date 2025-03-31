@@ -5,6 +5,5 @@
     "outDir": "./dist/",
     "declarationDir": "./dts"
   },
-  "include": ["./src/**/*.ts", "./src/**/*.cts"],
-  "references": []
+  "include": ["./src/**/*.ts", "./src/**/*.cts"]
 }

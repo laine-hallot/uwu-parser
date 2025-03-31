@@ -22,11 +22,11 @@
     "url": "https://github.com/babel/babel.git",
     "directory": "packages/babel-parser"
   },
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "types": "./typings/babel-parser.d.ts",
   "files": [
     "bin",
-    "lib",
+    "dist",
     "typings/babel-parser.d.ts",
     "index.cjs"
   ],
@@ -61,8 +61,8 @@
       {
         "exports": {
           ".": {
-            "require": "./lib/index.cjs",
-            "default": "./lib/index.js"
+            "require": "./dist/index.cjs",
+            "default": "./dist/index.js"
           },
           "./package.json": "./package.json"
         }
@@ -75,7 +75,7 @@
   "exports": {
     ".": {
       "require": "./index.cjs",
-      "default": "./lib/index.js"
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },

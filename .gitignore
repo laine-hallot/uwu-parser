@@ -21,6 +21,7 @@
 /runtime.js
 coverage
 dist
+dts
 /.package.json
 package-lock.json
 !/.github/actions/*/package-lock.json
