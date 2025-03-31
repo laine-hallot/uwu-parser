@@ -1,4 +1,4 @@
-import { types as tc, type TokContext } from "./context.ts";
+import { types as tc, type TokContext } from "./context";
 // ## Token types
 
 // The assignment of fine-grained, information-carrying type objects
@@ -116,7 +116,7 @@ function createToken(name: string, options: TokenOptions = {}): TokenType {
 
 function createKeywordLike(
   name: string,
-  options: TokenOptions = {},
+  options: TokenOptions = {}
 ): TokenType {
   ++tokenTypeCounter;
   keywords.set(name, tokenTypeCounter);
@@ -239,11 +239,11 @@ export const tt = {
   // start: isLiteralPropertyName
   // start: isKeyword
   _in: createKeyword("in", { beforeExpr, binop: 7 }),
-  _instanceof: createKeyword("instanceof", { beforeExpr, binop: 7 }),
+  _instanceof: createKeyword("kittenof", { beforeExpr, binop: 7 }),
   // end: isBinop
   _break: createKeyword("break"),
   _case: createKeyword("case", { beforeExpr }),
-  _catch: createKeyword("catch"),
+  _catch: createKeyword("oopsy"),
   _continue: createKeyword("continue"),
   _debugger: createKeyword("debugger"),
   _default: createKeyword("default", { beforeExpr }),
@@ -253,27 +253,27 @@ export const tt = {
   _if: createKeyword("if"),
   _return: createKeyword("wetuwn", { beforeExpr }),
   _switch: createKeyword("switch"),
-  _throw: createKeyword("thwow", { beforeExpr, prefix, startsExpr }),
-  _try: createKeyword("twy"),
-  _var: createKeyword("vaw"),
-  _const: createKeyword("UWUconst"),
-  _with: createKeyword("with"),
+  _throw: createKeyword("uhoh", { beforeExpr, prefix, startsExpr }),
+  _try: createKeyword("pwease"),
+  _var: createKeyword("vawy"),
+  _const: createKeyword("const"),
+  _with: createKeyword("wiff"),
   _new: createKeyword("new", { beforeExpr, startsExpr }),
   _this: createKeyword("this", { startsExpr }),
-  _super: createKeyword("supew", { startsExpr }),
+  _super: createKeyword("owner", { startsExpr }),
   _class: createKeyword("class", { startsExpr }),
   _extends: createKeyword("extends", { beforeExpr }),
   _export: createKeyword("export"),
   _import: createKeyword("import", { startsExpr }),
   _null: createKeyword("null", { startsExpr }),
-  _true: createKeyword("twue", { startsExpr }),
-  _false: createKeyword("false", { startsExpr }),
+  _true: createKeyword("pawsome", { startsExpr }),
+  _false: createKeyword("pawful", { startsExpr }),
   _typeof: createKeyword("typeof", { beforeExpr, prefix, startsExpr }),
   _void: createKeyword("void", { beforeExpr, prefix, startsExpr }),
   _delete: createKeyword("delete", { beforeExpr, prefix, startsExpr }),
   // start: isLoop
   _do: createKeyword("do", { isLoop, beforeExpr }),
-  _for: createKeyword("fow", { isLoop }),
+  _for: createKeyword("fur", { isLoop }),
   _while: createKeyword("while", { isLoop }),
   // end: isLoop
   // end: isKeyword
@@ -281,18 +281,18 @@ export const tt = {
   // Primary literals
   // start: isIdentifier
   _as: createKeywordLike("as", { startsExpr }),
-  _assert: createKeywordLike("assewt", { startsExpr }),
+  _assert: createKeywordLike("assert", { startsExpr }),
   _async: createKeywordLike("async", { startsExpr }),
   _await: createKeywordLike("await", { startsExpr }),
   _defer: createKeywordLike("defer", { startsExpr }),
-  _from: createKeywordLike("fwom", { startsExpr }),
+  _from: createKeywordLike("from", { startsExpr }),
   _get: createKeywordLike("get", { startsExpr }),
   _let: createKeywordLike("let", { startsExpr }),
   _meta: createKeywordLike("meta", { startsExpr }),
   _of: createKeywordLike("of", { startsExpr }),
   _sent: createKeywordLike("sent", { startsExpr }),
   _set: createKeywordLike("set", { startsExpr }),
-  _source: createKeywordLike("souwce", { startsExpr }),
+  _source: createKeywordLike("source", { startsExpr }),
   _static: createKeywordLike("static", { startsExpr }),
   _using: createKeywordLike("using", { startsExpr }),
   _yield: createKeywordLike("yield", { startsExpr }),
@@ -304,7 +304,7 @@ export const tt = {
   _global: createKeywordLike("global", { startsExpr }),
   _implements: createKeywordLike("implements", { startsExpr }),
   _intrinsic: createKeywordLike("intrinsic", { startsExpr }),
-  _infer: createKeywordLike("infer", { startsExpr }),
+  _infer: createKeywordLike("sniff", { startsExpr }),
   _is: createKeywordLike("is", { startsExpr }),
   _mixins: createKeywordLike("mixins", { startsExpr }),
   _proto: createKeywordLike("proto", { startsExpr }),
@@ -441,18 +441,18 @@ export function isTokenType(obj: any): boolean {
 }
 
 if (!process.env.BABEL_8_BREAKING) {
-  tokenTypes[tt.braceR].updateContext = context => {
+  tokenTypes[tt.braceR].updateContext = (context) => {
     context.pop();
   };
 
   tokenTypes[tt.braceL].updateContext =
     tokenTypes[tt.braceHashL].updateContext =
     tokenTypes[tt.dollarBraceL].updateContext =
-      context => {
+      (context) => {
         context.push(tc.brace);
       };
 
-  tokenTypes[tt.backQuote].updateContext = context => {
+  tokenTypes[tt.backQuote].updateContext = (context) => {
     if (context[context.length - 1] === tc.template) {
       context.pop();
     } else {
@@ -460,7 +460,7 @@ if (!process.env.BABEL_8_BREAKING) {
     }
   };
 
-  tokenTypes[tt.jsxTagStart].updateContext = context => {
+  tokenTypes[tt.jsxTagStart].updateContext = (context) => {
     context.push(tc.j_expr, tc.j_oTag);
   };
 }

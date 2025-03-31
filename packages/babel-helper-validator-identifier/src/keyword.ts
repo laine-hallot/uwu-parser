@@ -84,7 +84,7 @@ export function isStrictBindOnlyReservedWord(word: string): boolean {
  */
 export function isStrictBindReservedWord(
   word: string,
-  inModule: boolean,
+  inModule: boolean
 ): boolean {
   return (
     isStrictReservedWord(word, inModule) || isStrictBindOnlyReservedWord(word)
