@@ -35,14 +35,13 @@
   },
   "# dependencies": "This package doesn't actually have runtime dependencies. @babel/types is only needed for type definitions.",
   "dependencies": {
-    "@babel/types": "workspace:^"
+    "@babel/types": "7.27.0"
   },
   "devDependencies": {
-    "@babel/code-frame": "workspace:^",
-    "@babel/helper-check-duplicate-nodes": "workspace:^",
-    "@babel/helper-fixtures": "workspace:^",
-    "@babel/helper-string-parser": "workspace:^",
-    "@babel/helper-validator-identifier": "workspace:^",
+    "@babel/code-frame": "7.26.2",
+    "@babel/helper-check-duplicate-nodes": "7.25.9",
+    "@babel/helper-fixtures": "^7.26.0",
+    "@babel/helper-string-parser": "^7.25.9",
     "charcodes": "^0.2.0"
   },
   "bin": "./bin/babel-parser.js",
