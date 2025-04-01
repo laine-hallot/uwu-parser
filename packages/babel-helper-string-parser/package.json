@@ -13,6 +13,10 @@
     "access": "public"
   },
   "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch"
+  },
   "devDependencies": {
     "charcodes": "^0.2.0"
   },

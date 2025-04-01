@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "Preserve",
     "lib": ["esnext"],
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,

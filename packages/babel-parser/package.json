@@ -1,5 +1,5 @@
 {
-  "name": "@babel/parser",
+  "name": "@uwuscript/parser",
   "version": "7.27.0",
   "description": "A JavaScript parser",
   "author": "The Babel Team (https://babel.dev/team)",
@@ -33,6 +33,10 @@
   "engines": {
     "node": ">=6.0.0"
   },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch"
+  },
   "# dependencies": "This package doesn't actually have runtime dependencies. @babel/types is only needed for type definitions.",
   "dependencies": {
     "@babel/types": "7.27.0"
@@ -42,7 +46,10 @@
     "@babel/helper-check-duplicate-nodes": "7.25.9",
     "@babel/helper-fixtures": "^7.26.0",
     "@babel/helper-string-parser": "^7.25.9",
-    "charcodes": "^0.2.0"
+    "@babel/helpers": "^7.27.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "charcodes": "^0.2.0",
+    "vite": "^6.2.4"
   },
   "bin": "./bin/babel-parser.js",
   "conditions": {
