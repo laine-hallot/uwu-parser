@@ -259,7 +259,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.22.13, @babel/code-frame@npm:^7.22.5, @babel/code-frame@npm:^7.24.1, @babel/code-frame@npm:^7.24.2, @babel/code-frame@npm:^7.24.7, @babel/code-frame@npm:^7.26.2":
+"@babel/code-frame@npm:7.26.2, @babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.22.13, @babel/code-frame@npm:^7.22.5, @babel/code-frame@npm:^7.24.1, @babel/code-frame@npm:^7.24.2, @babel/code-frame@npm:^7.24.7, @babel/code-frame@npm:^7.26.2":
   version: 7.26.2
   resolution: "@babel/code-frame@npm:7.26.2"
   dependencies:
@@ -567,6 +567,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@babel/helper-check-duplicate-nodes@npm:7.25.9":
+  version: 7.25.9
+  resolution: "@babel/helper-check-duplicate-nodes@npm:7.25.9"
+  dependencies:
+    "@babel/types": "npm:^7.25.9"
+  checksum: 10/5f54953c70e7b5039f821869ccb43ff6de94ae8ab46def76e693b7175973f67fa8051a57123d79ec0646ea0517b4c18c003ea79b7a89ec916ed21b64287175cc
+  languageName: node
+  linkType: hard
+
 "@babel/helper-check-duplicate-nodes@workspace:^, @babel/helper-check-duplicate-nodes@workspace:packages/babel-helper-check-duplicate-nodes":
   version: 0.0.0-use.local
   resolution: "@babel/helper-check-duplicate-nodes@workspace:packages/babel-helper-check-duplicate-nodes"
@@ -690,6 +699,16 @@ __metadata:
   dependencies:
     "@babel/types": "npm:^7.24.7"
   checksum: 10/079d86e65701b29ebc10baf6ed548d17c19b808a07aa6885cc141b690a78581b180ee92b580d755361dc3b16adf975b2d2058b8ce6c86675fcaf43cf22f2f7c6
+  languageName: node
+  linkType: hard
+
+"@babel/helper-fixtures@npm:^7.26.0":
+  version: 7.26.0
+  resolution: "@babel/helper-fixtures@npm:7.26.0"
+  dependencies:
+    "@jridgewell/gen-mapping": "npm:^0.3.5"
+    semver: "npm:^6.3.1"
+  checksum: 10/39d8a6b5326359c9d45ef590c02d1731370b245ee2d46fc9b5169d371ec724b97cc04931cc14c161c02eba782416028f30e7159961647c0e7af9487a066c8195
   languageName: node
   linkType: hard
 
@@ -1199,12 +1218,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@babel/parser@workspace:packages/babel-parser"
   dependencies:
-    "@babel/code-frame": "workspace:^"
-    "@babel/helper-check-duplicate-nodes": "workspace:^"
-    "@babel/helper-fixtures": "workspace:^"
-    "@babel/helper-string-parser": "workspace:^"
-    "@babel/helper-validator-identifier": "workspace:^"
-    "@babel/types": "workspace:^"
+    "@babel/code-frame": "npm:7.26.2"
+    "@babel/helper-check-duplicate-nodes": "npm:7.25.9"
+    "@babel/helper-fixtures": "npm:^7.26.0"
+    "@babel/helper-string-parser": "npm:^7.25.9"
+    "@babel/types": "npm:7.27.0"
     charcodes: "npm:^0.2.0"
   bin:
     parser: ./bin/babel-parser.js
@@ -2962,21 +2980,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-object-rest-spread@workspace:^, @babel/plugin-transform-object-rest-spread@workspace:packages/babel-plugin-transform-object-rest-spread":
-  version: 0.0.0-use.local
-  resolution: "@babel/plugin-transform-object-rest-spread@workspace:packages/babel-plugin-transform-object-rest-spread"
-  dependencies:
-    "@babel/core": "workspace:^"
-    "@babel/helper-compilation-targets": "workspace:^"
-    "@babel/helper-plugin-test-runner": "workspace:^"
-    "@babel/helper-plugin-utils": "workspace:^"
-    "@babel/parser": "workspace:^"
-    "@babel/plugin-transform-parameters": "workspace:^"
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  languageName: unknown
-  linkType: soft
-
 "@babel/plugin-transform-object-set-prototype-of-to-assign@workspace:^, @babel/plugin-transform-object-set-prototype-of-to-assign@workspace:packages/babel-plugin-transform-object-set-prototype-of-to-assign":
   version: 0.0.0-use.local
   resolution: "@babel/plugin-transform-object-set-prototype-of-to-assign@workspace:packages/babel-plugin-transform-object-set-prototype-of-to-assign"
@@ -3808,7 +3811,7 @@ __metadata:
     "@babel/plugin-transform-new-target": "workspace:^"
     "@babel/plugin-transform-nullish-coalescing-operator": "workspace:^"
     "@babel/plugin-transform-numeric-separator": "workspace:^"
-    "@babel/plugin-transform-object-rest-spread": "workspace:^"
+    "@babel/plugin-transform-object-rest-spread": "npm:8.0.0-alpha.16"
     "@babel/plugin-transform-object-super": "workspace:^"
     "@babel/plugin-transform-optional-catch-binding": "workspace:^"
     "@babel/plugin-transform-optional-chaining": "workspace:^"
@@ -4063,7 +4066,7 @@ __metadata:
     "@babel/plugin-transform-nullish-coalescing-operator": "workspace:^"
     "@babel/plugin-transform-numeric-separator": "workspace:^"
     "@babel/plugin-transform-object-assign": "workspace:^"
-    "@babel/plugin-transform-object-rest-spread": "workspace:^"
+    "@babel/plugin-transform-object-rest-spread": "npm:8.0.0-alpha.16"
     "@babel/plugin-transform-object-set-prototype-of-to-assign": "workspace:^"
     "@babel/plugin-transform-object-super": "workspace:^"
     "@babel/plugin-transform-optional-catch-binding": "workspace:^"
@@ -4209,7 +4212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.12.7, @babel/types@npm:^7.24.0, @babel/types@npm:^7.24.7, @babel/types@npm:^7.27.0, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4":
+"@babel/types@npm:^7.12.7, @babel/types@npm:^7.24.0, @babel/types@npm:^7.24.7, @babel/types@npm:^7.25.9, @babel/types@npm:^7.27.0, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4":
   version: 7.27.0
   resolution: "@babel/types@npm:7.27.0"
   dependencies:

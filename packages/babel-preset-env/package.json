@@ -59,7 +59,7 @@
     "@babel/plugin-transform-new-target": "workspace:^",
     "@babel/plugin-transform-nullish-coalescing-operator": "workspace:^",
     "@babel/plugin-transform-numeric-separator": "workspace:^",
-    "@babel/plugin-transform-object-rest-spread": "workspace:^",
+    "@babel/plugin-transform-object-rest-spread": "8.0.0-alpha.16",
     "@babel/plugin-transform-object-super": "workspace:^",
     "@babel/plugin-transform-optional-catch-binding": "workspace:^",
     "@babel/plugin-transform-optional-chaining": "workspace:^",

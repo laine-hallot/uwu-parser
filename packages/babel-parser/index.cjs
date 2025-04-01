@@ -1,5 +1,5 @@
 try {
-  module.exports = require("./lib/index.cjs");
+  module.exports = require("./dist/index.cjs");
 } catch {
-  module.exports = require("./lib/index.js");
+  module.exports = require("./dist/index.js");
 }
