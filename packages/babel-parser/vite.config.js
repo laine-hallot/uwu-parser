@@ -2,19 +2,13 @@ import {
   babel as rollupBabel,
   getBabelOutputPlugin,
 } from "@rollup/plugin-babel";
-import { babel } from "@rollup/plugin-babel";
-import { cpus } from "node:os";
 import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Glob } from "glob";
 import { log } from "../../scripts/utils/logger.cjs";
-import { USE_ESM, commonJS } from "$repo-utils";
-import { Worker as JestWorker } from "jest-worker";
+import { commonJS } from "$repo-utils";
 import colors from "picocolors";
-import formatCode from "../../scripts/utils/formatCode.js";
-import fs from "node:fs";
 import path from "node:path";
 import rollupBabelSource from "../../scripts/rollup-plugin-babel-source.js";
 import rollupCommonJs from "@rollup/plugin-commonjs";
@@ -29,147 +23,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const { require, __dirname: monorepoRoot } = commonJS(import.meta.url);
 
-const defaultPackagesGlob = "./@(codemods|packages|eslint)/*";
-const defaultSourcesGlob = [
-  `${defaultPackagesGlob}/src/**/{*.js,*.cjs,!(*.d).ts,!(*.d).cts}`,
-  "!../../packages/babel-helpers/src/helpers/*",
-];
-
-const babelStandalonePluginConfigGlob =
-  "../../packages/babel-standalone/scripts/pluginConfig.json";
-
-const buildTypingsWatchGlob = [
-  "../../packages/babel-types/lib/definitions/**/*.js",
-  "../../packages/babel-types/scripts/generators/*.js",
-];
-
 // env vars from the cli are always strings, so !!ENV_VAR returns true for "false"
 function bool(value) {
   return Boolean(value) && value !== "false" && value !== "0";
-}
-
-/**
- * map source code path to the generated artifacts path
- * @example
- * mapSrcToLib("packages/babel-core/src/index.js")
- * // returns "packages/babel-core/lib/index.js"
- * @example
- * mapSrcToLib("packages/babel-template/src/index.ts")
- * // returns "packages/babel-template/lib/index.js"
- * @example
- * mapSrcToLib("packages/babel-template/src/index.d.ts")
- * // returns "packages/babel-template/lib/index.d.ts"
- * @param {string} srcPath
- * @returns {string}
- */
-function mapSrcToLib(srcPath) {
-  const parts = srcPath
-    .replace(/(?<!\.d)\.ts$/, ".js")
-    .replace(/(?<!\.d)\.cts$/, ".cjs")
-    .split("/");
-  parts[2] = "lib";
-  return parts.join("/");
-}
-
-function mapToDts(packageName) {
-  return packageName.replace(
-    /(?<=\\|\/|^)(packages|eslint|codemods)(?=\\|\/)/,
-    "dts/$1"
-  );
-}
-
-function getIndexFromPackage(name) {
-  try {
-    fs.statSync(`./${name}/src/index.ts`);
-    return `${name}/src/index.ts`;
-  } catch {
-    return `${name}/src/index.js`;
-  }
-}
-
-/**
- * @param {string} generator
- * @param {string} pkg
- * @param {string} filename
- * @param {string} message
- */
-async function generateHelpers(generator, dest, filename, message) {
-  const { default: generateCode } = await import(generator);
-  const result = await formatCode(
-    await generateCode(filename),
-    path.join(dest, filename)
-  );
-  fs.writeFileSync(path.join(dest, filename), result, { mode: 0o644 });
-  log(`${colors.green("✔")} Generated ${message}`);
-}
-
-/**
- *
- * @typedef {("asserts" | "builders" | "constants" | "validators")} TypesHelperKind
- * @param {TypesHelperKind} helperKind
- * @param {string} filename
- */
-async function generateTypeHelpers(helperKind, filename = "index.ts") {
-  return generateHelpers(
-    `../../packages/babel-types/scripts/generators/${helperKind}.js`,
-    `../../packages/babel-types/src/${helperKind}/generated/`,
-    filename,
-    `@babel/types -> ${helperKind}`
-  );
-}
-
-function createWorker(useWorker) {
-  const numWorkers = Math.ceil(Math.max(cpus().length, 1) / 2) - 1;
-  if (
-    numWorkers === 0 ||
-    !useWorker ||
-    // For some reason, on CircleCI the workers hang indefinitely.
-    process.env.CIRCLECI
-  ) {
-    return require("./babel-worker.cjs");
-  }
-  const worker = new JestWorker(require.resolve("./babel-worker.cjs"), {
-    enableWorkerThreads: true,
-    numWorkers,
-    exposedMethods: ["transform"],
-  });
-  worker.getStdout().pipe(process.stdout);
-  worker.getStderr().pipe(process.stderr);
-  return worker;
-}
-
-async function buildBabel(useWorker, ignore = []) {
-  const worker = createWorker(useWorker);
-  const files = new Glob(defaultSourcesGlob, {
-    ignore: ignore.map(p => `${p.src}/**`),
-    posix: true,
-  });
-
-  const promises = [];
-  for await (const file of files) {
-    // @example ./packages/babel-parser/src/index.js
-    const dest = "./" + mapSrcToLib(file);
-    promises.push(
-      worker.transform(file, dest, {
-        sourceMaps: !file.endsWith(".d.ts"),
-      })
-    );
-  }
-  return Promise.allSettled(promises)
-    .then(results => {
-      results.forEach(result => {
-        if (result.status === "rejected") {
-          if (process.env.WATCH_SKIP_BUILD) {
-            console.error(result.reason);
-          } else {
-            throw result.reason;
-          }
-        }
-      });
-    })
-    .finally(() => {
-      worker.end?.();
-    });
 }
 
 /**
@@ -185,19 +41,12 @@ function resolveChain(baseUrl, ...packages) {
   );
 }
 
-// If this build is part of a pull request, include the pull request number in
-// the version number.
-let versionSuffix = "";
-if (process.env.CIRCLE_PR_NUMBER) {
-  versionSuffix = "+pr." + process.env.CIRCLE_PR_NUMBER;
-}
+const babelVersion = require("../../packages/babel-core/package.json").version;
 
-const babelVersion =
-  require("../../packages/babel-core/package.json").version + versionSuffix;
-function buildRollup(packages, buildStandalone) {
+const buildRollup = buildStandalone => {
   const sourcemap = process.env.NODE_ENV === "production";
   const pkgJSON = require("./package.json");
-  const version = pkgJSON.version + versionSuffix;
+  const version = pkgJSON.version;
   const { dependencies = {}, peerDependencies = {} } = pkgJSON;
   const external = [
     ...Object.keys(dependencies),
@@ -392,9 +241,9 @@ function buildRollup(packages, buildStandalone) {
         }),
     ].filter(Boolean),
   };
-}
+};
 
-const rlConfig = buildRollup();
+const rlConfig = buildRollup(false);
 
 export default defineConfig({
   build: {
