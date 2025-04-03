@@ -1,5 +1,5 @@
 import * as charCodes from "charcodes";
-import { isIdentifierStart } from "@babel/helper-validator-identifier";
+import { isIdentifierStart } from "./death";
 
 export {
   isIdentifierStart,
@@ -9,7 +9,7 @@ export {
   isStrictBindReservedWord,
   isStrictReservedWord,
   isKeyword,
-} from "@babel/helper-validator-identifier";
+} from "./death/index";
 
 export const keywordRelationalOperator = /^in(stanceof)?$/;
 

@@ -15,334 +15,6 @@ import nodeProtocol from "../../scripts/babel-plugin-transform-node-protocol-imp
 function normalize(src) {
   return src.replace(/\//, pathUtils.sep);
 }
-export default function (api) {
-  const env = api.env();
-
-  const outputType = api.cache.invalidate(() => {
-    try {
-      const type = fs.readFileSync(__dirname + "/.module-type", "utf-8").trim();
-      if (type === "module") return type;
-    } catch (_) {}
-    return "script";
-  });
-
-  const sources = ["./src", "../../codemods/*/src", "../../eslint/*/src"];
-
-  const envOpts = {
-    shippedProposals: true,
-    modules: false,
-    exclude: [
-      "transform-typeof-symbol",
-      // We need to enable useBuiltIns
-      "transform-object-rest-spread",
-    ],
-  };
-
-  const presetTsOpts = {
-    onlyRemoveTypeImports: true,
-    optimizeConstEnums: true,
-  };
-  if (api.version.startsWith("7") && !bool(process.env.BABEL_8_BREAKING)) {
-    presetTsOpts.allowDeclareFields = true;
-  }
-
-  // These are "safe" assumptions, that we can enable globally
-  const assumptions = {
-    constantSuper: true,
-    ignoreFunctionLength: true,
-    ignoreToPrimitiveHint: true,
-    mutableTemplateObject: true,
-    noClassCalls: true,
-    noDocumentAll: true,
-    noNewArrows: true,
-    setClassMethods: true,
-    setComputedProperties: true,
-    setSpreadProperties: true,
-    skipForOfIteratorClosing: true,
-    superIsCallableConstructor: true,
-  };
-
-  // These are "less safe": we only enable them on our own code
-  // and not when compiling dependencies.
-  const sourceAssumptions = {
-    objectRestNoSymbols: true,
-    pureGetters: true,
-    setPublicClassFields: true,
-  };
-
-  const parserAssumptions = {
-    iterableIsArray: true,
-  };
-
-  let targets = {};
-  let convertESM = outputType === "script";
-  let replaceTSImportExtension = true;
-  let ignoreLib = true;
-  let needsPolyfillsForOldNode = false;
-
-  const nodeVersion = bool(process.env.BABEL_8_BREAKING) ? "20.19" : "6.9";
-  // The vast majority of our src files are modules, but we use
-  // unambiguous to keep things simple until we get around to renaming
-  // the modules to be more easily distinguished from CommonJS
-  const unambiguousSources = [
-    ...sources,
-    "../*/test",
-    "../../codemods/*/test",
-    "../../eslint/*/test",
-  ];
-
-  const lazyRequireSources = [
-    "../babel-cli",
-    "../babel-core",
-    "../babel-preset-env/src/available-plugins.js",
-  ];
-
-  switch (env) {
-    // Configs used during bundling builds.
-    case "standalone":
-      convertESM = false;
-      replaceTSImportExtension = false;
-      ignoreLib = false;
-      // rollup-commonjs will converts node_modules to ESM
-      unambiguousSources.push(
-        "../../**/node_modules",
-        "../babel-preset-env/data",
-        "../babel-compat-data",
-        "../babel-runtime/regenerator"
-      );
-      targets = { ie: 7 };
-      needsPolyfillsForOldNode = true;
-      break;
-    case "rollup":
-      convertESM = false;
-      replaceTSImportExtension = false;
-      ignoreLib = false;
-      // rollup-commonjs will converts node_modules to ESM
-      unambiguousSources.push(
-        "../../**/node_modules",
-        "../babel-preset-env/data",
-        "../babel-compat-data"
-      );
-      targets = { node: nodeVersion };
-      needsPolyfillsForOldNode = true;
-      break;
-    case "test-legacy": // In test-legacy environment, we build babel on latest node but test on minimum supported legacy versions
-    // fall through
-    case "production":
-      // Config during builds before publish.
-      targets = { node: nodeVersion };
-      needsPolyfillsForOldNode = true;
-      break;
-    case "test":
-      targets = { node: "current" };
-      needsPolyfillsForOldNode = true;
-      break;
-    case "development":
-      envOpts.debug = true;
-      targets = { node: "current" };
-      break;
-  }
-
-  if (process.env.STRIP_BABEL_8_FLAG && bool(process.env.BABEL_8_BREAKING)) {
-    // Never apply polyfills when compiling for Babel 8
-    needsPolyfillsForOldNode = false;
-  }
-
-  const config = {
-    targets,
-    assumptions,
-    babelrc: false,
-    browserslistConfigFile: false,
-
-    // Our dependencies are all standard CommonJS, along with all sorts of
-    // other random files in Babel's codebase, so we use script as the default,
-    // and then mark actual modules as modules farther down.
-    sourceType: "script",
-    comments: false,
-    ignore: [
-      // These may not be strictly necessary with the newly-limited scope of
-      // babelrc searching, but including them for now because we had them
-      // in our .babelignore before.
-      "../*/test/fixtures",
-      ignoreLib ? "../*/lib" : null,
-      "../babel-standalone/babel.js",
-      "../babel-helper-validator-identifier",
-      "../babel-helper-string-parser",
-    ]
-      .filter(Boolean)
-      .map(normalize),
-    parserOpts: {
-      createImportExpressions: true,
-    },
-    presets: [
-      // presets are applied from right to left
-      ["@babel/env", envOpts],
-      ["@babel/preset-typescript", presetTsOpts],
-    ],
-    plugins: [
-      ["@babel/transform-object-rest-spread", { useBuiltIns: true }],
-
-      convertESM ? "@babel/transform-export-namespace-from" : null,
-      env !== "standalone"
-        ? ["@babel/plugin-transform-json-modules", { uncheckedRequire: true }]
-        : null,
-
-      bit,
-      nodeProtocol,
-    ].filter(Boolean),
-    overrides: [
-      {
-        //test: ["./", "../babel-helper-validator-identifier"].map(normalize),
-        test: ["./"].map(normalize),
-        plugins: [
-          "babel-plugin-transform-charcodes",
-          pluginBabelParserTokenType,
-        ],
-        assumptions: parserAssumptions,
-      },
-      {
-        test: [
-          "../babel-generator",
-          "../babel-helper-create-class-features-plugin",
-          "../babel-helper-string-parser",
-        ].map(normalize),
-        plugins: ["babel-plugin-transform-charcodes"],
-      },
-      {
-        test: ["../babel-generator"].map(normalize),
-        plugins: [pluginGeneratorOptimization],
-      },
-      convertESM && {
-        test: ["../babel-node/src"].map(normalize),
-        // Used to conditionally import kexec
-        plugins: ["@babel/plugin-transform-dynamic-import"],
-      },
-      {
-        test: sources.map(normalize),
-        assumptions: sourceAssumptions,
-        plugins: [
-          transformNamedBabelTypesImportToDestructuring,
-          replaceTSImportExtension ? pluginReplaceTSImportExtension : null,
-
-          [
-            pluginToggleBooleanFlag,
-            { name: "USE_ESM", value: outputType === "module" },
-            "flag-USE_ESM",
-          ],
-          [
-            pluginToggleBooleanFlag,
-            { name: "IS_STANDALONE", value: env === "standalone" },
-            "flag-IS_STANDALONE",
-          ],
-          [
-            pluginToggleBooleanFlag,
-            {
-              name: "process.env.IS_PUBLISH",
-              value: bool(process.env.IS_PUBLISH),
-            },
-            "flag-IS_PUBLISH",
-          ],
-
-          [
-            pluginToggleBooleanFlag,
-            {
-              name: "process.env.BABEL_8_BREAKING",
-              value: process.env.STRIP_BABEL_8_FLAG
-                ? bool(process.env.BABEL_8_BREAKING)
-                : null,
-            },
-            "flag-BABEL_8_BREAKING",
-          ],
-
-          pluginPackageJsonMacro,
-
-          [
-            pluginRequiredVersionMacro,
-            {
-              allowAny: !process.env.IS_PUBLISH || env === "standalone",
-              overwrite(requiredVersion, filename) {
-                if (requiredVersion === 7) requiredVersion = "^7.0.0-0";
-                if (process.env.BABEL_8_BREAKING) {
-                  return packageJson.version;
-                }
-                const match = filename.match(/packages[\\/](.+?)[\\/]/);
-                /* if (
-                  match &&
-                  babel7_8compat["babel7plugins-babel8core"].includes(match[1])
-                ) {
-                  return `${requiredVersion} || >8.0.0-alpha <8.0.0-beta`;
-                } */
-              },
-            },
-          ],
-
-          needsPolyfillsForOldNode && pluginPolyfillsOldNode,
-        ].filter(Boolean),
-      },
-      convertESM && {
-        test: lazyRequireSources.map(normalize),
-        plugins: [
-          // Explicitly use the lazy version of CommonJS modules.
-          [
-            "@babel/transform-modules-commonjs",
-            { importInterop: importInteropSrc, lazy: true },
-          ],
-        ],
-      },
-      convertESM && {
-        test: ["../babel-core/src"].map(normalize),
-        plugins: [
-          [
-            pluginInjectNodeReexportsHints,
-            { names: ["types", "tokTypes", "traverse", "template"] },
-          ],
-        ],
-      },
-      convertESM && {
-        test: sources.map(normalize),
-        exclude: lazyRequireSources.map(normalize),
-        plugins: [
-          [
-            "@babel/transform-modules-commonjs",
-            { importInterop: importInteropSrc },
-          ],
-        ],
-      },
-      convertESM && {
-        exclude: ["../babel-core/src/config/files/import-meta-resolve.ts"].map(
-          normalize
-        ),
-        plugins: [pluginImportMetaUrl],
-      },
-      {
-        test: sources.map(source => normalize(source.replace("/src", "/test"))),
-        plugins: [
-          [
-            "@babel/transform-modules-commonjs",
-            { importInterop: importInteropTest },
-          ],
-          "@babel/plugin-transform-dynamic-import",
-        ],
-      },
-      {
-        test: unambiguousSources.map(normalize),
-        sourceType: "unambiguous",
-      },
-    ].filter(Boolean),
-  };
-
-  if (jestSnapshot) {
-    config.plugins = [];
-    config.presets = [];
-    config.overrides = [];
-    config.parserOpts = {
-      plugins: ["typescript"],
-    };
-    config.sourceType = "unambiguous";
-  }
-
-  return config;
-}
 
 let monorepoPackages;
 function getMonorepoPackages() {
@@ -1047,7 +719,7 @@ function pluginReplaceTSImportExtension() {
 }
 
 const tokenTypesMapping = new Map();
-const tokenTypeSourcePath = "./src/tokenizer/types.ts";
+const tokenTypeSourcePath = "../babel-parser/src/tokenizer/types.ts";
 
 function getTokenTypesMapping() {
   if (tokenTypesMapping.size === 0) {
@@ -1186,5 +858,22 @@ function pluginGeneratorOptimization({ types: t }) {
         },
       },
     },
+  };
+}
+
+export default function (api) {
+  api.cache(false);
+  return {
+    overrides: [
+      {
+        //test: ["./", "../babel-helper-validator-identifier"].map(normalize),
+        test: ["./"].map(normalize),
+        plugins: [
+          "babel-plugin-transform-charcodes",
+          pluginBabelParserTokenType,
+        ],
+        assumptions: { iterableIsArray: true },
+      },
+    ],
   };
 }

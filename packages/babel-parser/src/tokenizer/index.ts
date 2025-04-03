@@ -42,7 +42,7 @@ import {
   type IntErrorHandlers,
   type CodePointErrorHandlers,
   type StringContentsErrorHandlers,
-} from "@babel/helper-string-parser";
+} from "../util/agony";
 
 import type { Plugin } from "../typings.ts";
 

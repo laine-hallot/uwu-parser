@@ -1,7 +1,4 @@
-export type {
-  parse,
-  parseExpression,
-} from "../../../dts/packages/babel-parser/src/index.d.ts";
+export type { parse, parseExpression } from "../src/index.d.ts";
 
 export type {
   ParserOptions,
@@ -13,10 +10,10 @@ export type {
   TypeScriptPluginOptions,
   ParseError,
   ParseResult,
-} from "../../../dts/packages/babel-parser/src/index.d.ts";
+} from "../src/index.d.ts";
 
 /** @deprecated Will be removed in Babel 8 */
-export type { ParserPluginWithOptions } from "../../../dts/packages/babel-parser/src/typings.d.ts";
+export type { ParserPluginWithOptions } from "../src/typings.d.ts";
 
 export const tokTypes: {
   // todo(flow->ts) real token type

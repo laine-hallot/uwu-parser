@@ -12,9 +12,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/index.js",
+  "main": "./lib/index.cjs",
   "scripts": {
-    "build": "tsc",
+    "build": "vite build && tsc",
     "build:watch": "tsc --watch"
   },
   "devDependencies": {
@@ -43,7 +43,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "default": "./dist/index.cjs"
     },
     "./package.json": "./package.json"
   },

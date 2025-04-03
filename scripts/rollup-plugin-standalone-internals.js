@@ -1,10 +1,13 @@
 import { fileURLToPath } from "node:url";
-import pluginConfig from "../packages/babel-standalone/scripts/pluginConfig.json" with { type: "json" };
+//import pluginConfig from "../packages/babel-standalone/scripts/pluginConfig.json" with { type: "json" };
 
 const standaloneURL = new URL("../packages/babel-standalone/", import.meta.url);
 const inStandalone = path =>
   fileURLToPath(new URL(path, standaloneURL)).replace(/\\/g, "/");
-const { noopPlugins, unexposedNoopPlugins } = pluginConfig;
+const { noopPlugins, unexposedNoopPlugins } = {
+  noopPlugins: [],
+  unexposedNoopPlugins: [],
+};
 
 const pluginUtilsID = "@babel/helper-plugin-utils";
 

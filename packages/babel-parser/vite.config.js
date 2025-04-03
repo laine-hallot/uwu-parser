@@ -7,7 +7,6 @@ import { defineConfig } from "vite";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { log } from "../../scripts/utils/logger.cjs";
-import { commonJS } from "$repo-utils";
 import colors from "picocolors";
 import path from "node:path";
 import rollupBabelSource from "../../scripts/rollup-plugin-babel-source.js";
@@ -21,7 +20,7 @@ import rollupStandaloneInternals from "../../scripts/rollup-plugin-standalone-in
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const { require, __dirname: monorepoRoot } = commonJS(import.meta.url);
+//const { require, __dirname: monorepoRoot } = commonJS(import.meta.url);
 
 // env vars from the cli are always strings, so !!ENV_VAR returns true for "false"
 function bool(value) {
@@ -41,7 +40,7 @@ function resolveChain(baseUrl, ...packages) {
   );
 }
 
-const babelVersion = require("../../packages/babel-core/package.json").version;
+const babelVersion = "7.26.10";
 
 const buildRollup = buildStandalone => {
   const sourcemap = process.env.NODE_ENV === "production";
@@ -58,6 +57,8 @@ const buildRollup = buildStandalone => {
     /babel-plugin-dynamic-import-node\/utils/,
     // required by preset-env
     /@babel\/preset-modules\/.*/,
+    "@babel/helper-validator-identifier/",
+    "@babel/helper-string-parser/",
   ];
 
   log(`Compiling '${colors.cyan("*")}' with rollup ...`);
@@ -118,14 +119,8 @@ const buildRollup = buildStandalone => {
         include: [
           // Bundle node_modules only when building standalone
           buildStandalone ? /node_modules/ : "./node_modules/*/*.js",
-          "packages/babel-runtime/regenerator/**",
-          "packages/babel-runtime/helpers/*.js",
-          "packages/babel-preset-env/data/*.js",
           // Rollup doesn't read export maps, so it loads the cjs fallback
-          "packages/babel-compat-data/*.js",
-          // Used by @babel/standalone
-          "packages/babel-compat-data/scripts/data/legacy-plugin-aliases.js",
-          "packages/*/src/**/*.cjs",
+          "./src/**/*.cjs",
         ],
         ignore:
           process.env.STRIP_BABEL_8_FLAG && bool(process.env.BABEL_8_BREAKING)
@@ -144,15 +139,7 @@ const buildRollup = buildStandalone => {
                 "@babel/plugin-syntax-import-attributes",
               ]
             : [],
-        dynamicRequireTargets: [
-          // https://github.com/mathiasbynens/regexpu-core/blob/ffd8fff2e31f4597f6fdfee75d5ac1c5c8111ec3/rewrite-pattern.js#L48
-          resolveChain(
-            import.meta.url,
-            "../../packages/babel-helper-create-regexp-features-plugin",
-            "regexpu-core",
-            "regenerate-unicode-properties"
-          ).replace(/\\/g, "/") + "/**/*.js", // Must be posix path in rollup 3
-        ],
+        dynamicRequireTargets: [],
         // Never delegate to the native require()
         ignoreDynamicRequires: false,
         // Align with the Node.js behavior

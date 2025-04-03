@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "allowImportingTsExtensions": false,
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": ["./src/**/*.ts", "./src/**/*.cts"]
 }

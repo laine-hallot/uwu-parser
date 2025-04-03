@@ -1,10 +1,7 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
-import {
-  babel as rollupBabel,
-  getBabelOutputPlugin,
-} from "@rollup/plugin-babel";
+import { babel as rollupBabel } from "@rollup/plugin-babel";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -23,7 +20,7 @@ export default defineConfig({
     },
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "babel/helper-validator-identifier",
+      name: "babel/helper-string-parser",
       fileName: "index",
       formats: ["cjs"],
     },

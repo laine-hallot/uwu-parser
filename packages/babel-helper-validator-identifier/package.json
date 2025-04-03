@@ -11,19 +11,19 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "exports": {
     ".": {
       "types": "./dts/index.d.ts",
-      "default": "./dist/index.js"
+      "default": "./dist/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc --watch"
+    "build": "vite build && tsc"
   },
   "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.4",
     "@unicode/unicode-16.0.0": "^1.0.0",
     "charcodes": "^0.2.0"
   },
