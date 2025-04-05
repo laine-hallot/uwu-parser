@@ -1,5 +1,5 @@
 {
-  "name": "@babel/helper-string-parser",
+  "name": "@uwuscript/helper-string-parser",
   "version": "7.25.9",
   "description": "A utility package to parse strings",
   "repository": {
