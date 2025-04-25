@@ -116,7 +116,7 @@ function createToken(name: string, options: TokenOptions = {}): TokenType {
 
 function createKeywordLike(
   name: string,
-  options: TokenOptions = {}
+  options: TokenOptions = {},
 ): TokenType {
   ++tokenTypeCounter;
   keywords.set(name, tokenTypeCounter);
@@ -238,7 +238,7 @@ export const tt = {
   // when new keywords are added
   // start: isLiteralPropertyName
   // start: isKeyword
-  _in: createKeyword("in", { beforeExpr, binop: 7 }),
+  _in: createKeyword("hazz", { beforeExpr, binop: 7 }),
   _instanceof: createKeyword("kittenof", { beforeExpr, binop: 7 }),
   // end: isBinop
   _break: createKeyword("break"),
@@ -251,7 +251,7 @@ export const tt = {
   _finally: createKeyword("finally"),
   _function: createKeyword("funkywunk", { startsExpr }),
   _if: createKeyword("if"),
-  _return: createKeyword("wetuwn", { beforeExpr }),
+  _return: createKeyword("awooo", { beforeExpr }),
   _switch: createKeyword("switch"),
   _throw: createKeyword("uhoh", { beforeExpr, prefix, startsExpr }),
   _try: createKeyword("pwease"),
@@ -270,7 +270,7 @@ export const tt = {
   _false: createKeyword("pawful", { startsExpr }),
   _typeof: createKeyword("typeof", { beforeExpr, prefix, startsExpr }),
   _void: createKeyword("void", { beforeExpr, prefix, startsExpr }),
-  _delete: createKeyword("delete", { beforeExpr, prefix, startsExpr }),
+  _delete: createKeyword("nom", { beforeExpr, prefix, startsExpr }),
   // start: isLoop
   _do: createKeyword("do", { isLoop, beforeExpr }),
   _for: createKeyword("fur", { isLoop }),
@@ -441,18 +441,18 @@ export function isTokenType(obj: any): boolean {
 }
 
 if (!process.env.BABEL_8_BREAKING) {
-  tokenTypes[tt.braceR].updateContext = (context) => {
+  tokenTypes[tt.braceR].updateContext = context => {
     context.pop();
   };
 
   tokenTypes[tt.braceL].updateContext =
     tokenTypes[tt.braceHashL].updateContext =
     tokenTypes[tt.dollarBraceL].updateContext =
-      (context) => {
+      context => {
         context.push(tc.brace);
       };
 
-  tokenTypes[tt.backQuote].updateContext = (context) => {
+  tokenTypes[tt.backQuote].updateContext = context => {
     if (context[context.length - 1] === tc.template) {
       context.pop();
     } else {
@@ -460,7 +460,7 @@ if (!process.env.BABEL_8_BREAKING) {
     }
   };
 
-  tokenTypes[tt.jsxTagStart].updateContext = (context) => {
+  tokenTypes[tt.jsxTagStart].updateContext = context => {
     context.push(tc.j_expr, tc.j_oTag);
   };
 }
